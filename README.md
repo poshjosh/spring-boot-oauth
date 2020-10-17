@@ -94,7 +94,7 @@ public class OAuth2Configuration extends OAuth2ConfigurationSource{
 }
 ```
 
-__Add Service__
+__Add `OAuth2Service`__
 
 ```java
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -111,7 +111,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.client.RestTemplate;
 
-@Service
+@Component
 public class OAuth2Service extends com.looseboxes.spring.oauth.OAuth2Service {
 
     private final Logger log = LoggerFactory.getLogger(OAuth2Service.class);
@@ -130,7 +130,7 @@ public class OAuth2Service extends com.looseboxes.spring.oauth.OAuth2Service {
 }
 ```
 
-__Use the service__
+__Use the `OAuth2Service`__
 
 ```java
 import com.myproject.security.oauth.OAuth2Service;
@@ -152,10 +152,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public abstract class AuthenticationResourceExample {
+@Service
+public abstract class AuthenticationService {
     
-    private final Logger log = LoggerFactory.getLogger(AuthenticationResourceExample.class);
+    private final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
     
     public static class AuthenticationException extends RuntimeException{
         public AuthenticationException() { }
@@ -177,9 +177,7 @@ public abstract class AuthenticationResourceExample {
     
     protected abstract Object save(OAuth2Profile<?> userProfile, Object user);
     
-    @PostMapping("/authenticate/oauth2")
-    public ResponseEntity<Object> authorizeAndRegisterNewAccountIfNeed(
-            @Valid @RequestBody OAuth2LoginVM loginVM) throws AuthenticationException{
+    public String authorizeAndRegisterNewAccountIfNeed(OAuth2LoginVM loginVM) throws AuthenticationException{
         
         log.debug("REST request to authenticate user by oauth: {}", loginVM);
         
@@ -202,7 +200,7 @@ public abstract class AuthenticationResourceExample {
             
             log.debug("Authorization successful: {}", token != null);
             
-            return this.respond(token);
+            return token;
         }
     }
 
