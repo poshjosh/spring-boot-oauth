@@ -1,0 +1,8 @@
+looseboxes:
+  spring:
+    oauth:
+      google:
+        # This property is dependent on property: spring.security.oauth2.client.registration.google.api-key
+        user-info-uri: https://people.googleapis.com/v1/people/me?personFields=emailAddresses,genders,metadata,names,phoneNumbers,photos,urls&key=${spring.security.oauth2.client.registration.google.api-key}   
+      facebook:
+        user-info-uri: https://graph.facebook.com/v8.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250),gender,birthday

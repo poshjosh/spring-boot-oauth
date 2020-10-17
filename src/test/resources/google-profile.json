@@ -1,0 +1,86 @@
+{
+  "photos": [
+    {
+      "url": "https://lh3.googleusercontent.com/a-/AOh14CClCilx9rKsoFYRaVSU6HZ46iWcEaz5FsIgIFVDMF=s100", 
+      "metadata": {
+        "source": {
+          "type": "PROFILE", 
+          "id": "107777778567036631539"
+        }, 
+        "primary": true
+      }
+    }
+  ], 
+  "etag": "%EiEBAj0DBAUGBwgJPgoLPMMNDg8QQBESExQVFzUKKDciJS4aBAECBQciDHh4SXhGL0WFRHICpQ==", 
+  "names": [
+    {
+      "displayNameLastFirst": "Ikwuagwu, Chinomso", 
+      "displayName": "Chinomso Ikwuagwu", 
+      "familyName": "Ikwuagwu", 
+      "unstructuredName": "Chinomso Ikwuagwu", 
+      "givenName": "Chinomso", 
+      "metadata": {
+        "source": {
+          "type": "PROFILE", 
+          "id": "107777778567036631539"
+        }, 
+        "primary": true
+      }
+    }
+  ], 
+  "resourceName": "people/107777778567036631539", 
+  "emailAddresses": [
+    {
+      "value": "chinomso.ikwuagwu@gmail.com", 
+      "metadata": {
+        "source": {
+          "type": "ACCOUNT", 
+          "id": "107777778567036631539"
+        }, 
+        "verified": true, 
+        "primary": true
+      }
+    }
+  ], 
+  "coverPhotos": [
+    {
+      "url": "https://lh3.googleusercontent.com/c5dQal-2XgZ82ahMn7yxrVF1ZssrJNSK_12Nu0TUZwzCWqmtoLxCUJgEzLGtxsrJ6-v6R6rKU_-FYm881TTiMCJ_=s1600", 
+      "default": true, 
+      "metadata": {
+        "source": {
+          "type": "PROFILE", 
+          "id": "107777778567036631539"
+        }, 
+        "primary": true
+      }
+    }
+  ], 
+  "locales": [
+    {
+      "value": "en-GB", 
+      "metadata": {
+        "source": {
+          "type": "ACCOUNT", 
+          "id": "107777778567036631539"
+        }, 
+        "primary": true
+      }
+    }
+  ], 
+  "metadata": {
+    "sources": [
+      {
+        "etag": "#6/CpOidRrGc=", 
+        "type": "PROFILE", 
+        "id": "107777778567036631539", 
+        "profileMetadata": {
+          "userTypes": [
+            "GOOGLE_USER"
+          ], 
+          "objectType": "PERSON"
+        }
+      }
+    ], 
+    "objectType": "PERSON"
+  }
+}
