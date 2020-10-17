@@ -2,7 +2,7 @@
 
 ### OAuth helper library for spring boot based projects
 
-__Greatly simplifies the use of spring booth oauth__
+__Greatly simplifies the use of spring boot oauth__
 
 Defines models for profile data e.g `GoogleProfilePeopleApi`, which may be
 used as follows:
@@ -33,71 +33,38 @@ public class FetchGoogleProfile {
 
 ### Configure your project
 
-__Define model__
+__Add application properties__
 
-```java
-import javax.validation.constraints.Size;
+Add the following application properties
 
-public class NewUserVM{
-
-    public static final int PASSWORD_MIN_LENGTH = 6;
-
-    public static final int PASSWORD_MAX_LENGTH = 100;
-
-    private Long id;
-
-    @Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH)
-    private String password;
-
-    @NotBlank
-    @Pattern(regexp = Constants.LOGIN_REGEX)
-    @Size(min = 1, max = 50)
-    private String login;
-
-    @Size(max = 50)
-    private String firstName;
-
-    @Size(max = 50)
-    private String lastName;
-
-    @Email
-    @Size(min = 5, max = 254)
-    private String email;
-
-    @Size(max = 256)
-    private String imageUrl;
-
-    private boolean activated = false;
-
-    @Size(min = 2, max = 10)
-    private String langKey;
-
-    private String createdBy;
-
-    private Instant createdDate;
-
-    private String lastModifiedBy;
-
-    private Instant lastModifiedDate;
-
-    private Set<String> authorities;
-
-    public NewUserVM() {
-        // Empty constructor needed for Jackson.
-    }
-
-    // Add getters and setters
-}
+```yml
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            api-key: 
+looseboxes:
+  spring:
+    oauth:
+      google:
+        # This property is dependent on property: spring.security.oauth2.client.registration.google.api-key
+        user-info-uri: https://people.googleapis.com/v1/people/me?personFields=emailAddresses,genders,metadata,names,phoneNumbers,photos,urls&key=${spring.security.oauth2.client.registration.google.api-key}   
+      facebook:
+        user-info-uri: https://graph.facebook.com/v8.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250),gender,birthday
 ```
 
 __Add jackson deserializer for `OAuth2LoginVM`__
+
+Use the following helper method to configure your `ObjectMapper`
 
 ```java
 import com.looseboxes.spring.oauth.OAuth2LoginVM;
 
 public class ConfigurationHelper{
 
-    public ObjectMapper addOAuth2ResponseDeserializer(ObjectMapper objectMapper) {
+    public static ObjectMapper addOAuth2ResponseDeserializer(ObjectMapper objectMapper) {
 	SimpleModule module = new SimpleModule();
 	module.addDeserializer(OAuth2LoginVM.class, new OAuthResponseDeserializer(jsonNodeToOAuth2LoginVMConverter()));
 	objectMapper.registerModule(module);        
@@ -121,7 +88,7 @@ public class OAuth2Configuration extends OAuth2ConfigurationSource{
     
     @Override
     @Bean public OAuth2CacheProvider oauth2CacheProvider(ApplicationContext context) {
-        // Return implementation of OAuth2CacheProvider
+        //@TODO Return implementation of OAuth2CacheProvider
         // The interface just returns an instance of javax.cache.Cache
     }
 }
@@ -134,7 +101,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.looseboxes.spring.oauth.OAuth2;
 import com.looseboxes.spring.oauth.OAuth2CacheProvider;
 import com.looseboxes.spring.oauth.OAuth2ClientProperties;
-import com.myproject.web.rest.vm.NewUserVM;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
 import com.looseboxes.spring.oauth.profile.OAuth2Profile;
@@ -161,30 +127,6 @@ public class OAuth2Service extends com.looseboxes.spring.oauth.OAuth2Service {
         
         super(oauth2, restTemplate, objectMapper, cacheProvider, converterFactory, oauth2ClientProperties);
     }
-
-    @Override
-    public Optional<OAuth2Profile> getUserProfile(OAuth2AuthenticationToken oauthToken) {
-        try{
-            return super.getUserProfile(oauthToken);
-        }catch(Exception e) {
-            log.warn("Failed to get oauth2 user profile for: " + oauthToken.getPrincipal().getName(), e);
-            return Optional.empty();
-        }
-    }
-    
-    public Object getConfig(String clientId) {
-        return Collections.EMPTY_MAP;
-    }
-    
-    public NewUserVM createModelForRegisteringNewUser(
-            String clientId, OAuth2Profile userProfile) {
-
-        NewUserVM model = new NewUserVM(;
-
-        // Use the info in the oauth profile to update the model
-
-        return model;
-    }
 }
 ```
 
@@ -192,7 +134,6 @@ __Use the service__
 
 ```java
 import com.myproject.security.oauth.OAuth2Service;
-import com.myproject.web.rest.vm.NewUserVM;
 import com.looseboxes.spring.oauth.OAuth2;
 import com.looseboxes.spring.oauth.OAuth2LoginVM;
 import com.looseboxes.spring.oauth.profile.OAuth2Profile;
@@ -232,7 +173,7 @@ public abstract class AuthenticationResourceExample {
     
     protected abstract Optional<Object> findUserByEmail(String email);
     
-    protected abstract Object registerAccountAndActivate(NewUserVM viewModel);
+    protected abstract Object registerAccountAndActivate(OAuth2Profile userProfile);
     
     protected abstract Object save(OAuth2Profile<?> userProfile, Object user);
     
@@ -292,6 +233,8 @@ public abstract class AuthenticationResourceExample {
         
         Object user = null;
         
+        // Check if a user exists
+        //
         final String email = userProfile.getEmail().orElse(null);
 
         if(email != null) {
@@ -301,11 +244,13 @@ public abstract class AuthenticationResourceExample {
 
         if(user == null) {
 
-            NewUserVM newUser = this.oauth2Service
-                    .createModelForRegisteringNewUser(userProfile.getClientId(), userProfile);
-
-            user = registerAccountAndActivate(newUser);
+            // The user does not exist register and activate
+            // No need to send an activation email if a user joins via oauth
+            //
+            user = registerAccountAndActivate(userProfile);
             
+            // Ensure the newly registered user exists
+            //
             user = findUserByEmail(newUser.getEmail()).orElse(null);
         }    
     
@@ -323,6 +268,4 @@ public abstract class AuthenticationResourceExample {
     }
 }
 ```
-
-
 
