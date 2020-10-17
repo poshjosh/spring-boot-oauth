@@ -1,3 +1,10 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            api-key: 
 looseboxes:
   spring:
     oauth:
