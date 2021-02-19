@@ -42,6 +42,12 @@ public final class OAuth2ProfileImpl implements OAuth2Profile{
         return userProfile.getId();
     }
 
+    /**
+     * Return the OAuth2User's username.
+     * The returned username is the same as the user name in the Spring SecurityContext
+     * 
+     * @return The OAuth2User's username.
+     */
     @Override
     public String getUsername() {
         return user.getName();
