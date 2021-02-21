@@ -152,6 +152,26 @@ public class OAuth2Service {
     public OAuth2 getOAuth() {
         return OAuth;
     }
+
+    public RestTemplate getRestTemplate() {
+        return restTemplate;
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+    public OAuth2CacheProvider getCacheProvider() {
+        return cacheProvider;
+    }
+
+    public ProfileConverterFactory getConverterFactory() {
+        return converterFactory;
+    }
+
+    public OAuth2ClientProperties getOauthProperties() {
+        return oauthProperties;
+    }
 }
 /**
  * 
