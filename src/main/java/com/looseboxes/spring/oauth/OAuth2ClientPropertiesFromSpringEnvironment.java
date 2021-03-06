@@ -18,11 +18,12 @@ public class OAuth2ClientPropertiesFromSpringEnvironment implements OAuth2Client
     @Override
     public Properties get(String clientName) {
         Properties properties = new Properties();
-        final String apiKey = environment.getProperty("spring.security.oauth2.client.registration."+clientName+".api-key");
+        final String prefix = "spring.security.oauth2.client.registration.";
+        final String apiKey = environment.getProperty(prefix+clientName+".api-key");
         if(apiKey != null && !apiKey.isEmpty()) {
             properties.setProperty(API_KEY, apiKey);
         }
-        properties.setProperty(CLIENT_ID, environment.getProperty("spring.security.oauth2.client.registration."+clientName+".client-id"));
+        properties.setProperty(CLIENT_ID, environment.getProperty(prefix+clientName+".client-id"));
         properties.setProperty(USER_INFO_URI, environment.getProperty(PROPERTY_PREFIX + clientName + '.' + USER_INFO_URI));
         return properties;
     }
