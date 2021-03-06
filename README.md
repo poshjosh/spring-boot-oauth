@@ -39,15 +39,27 @@ Add the following application properties
 
 ```yml
 spring:
-  security:
+  security: 
+    # @see https://docs.spring.io/spring-security/site/docs/current/reference/html5/  
     oauth2:
       client:
         registration:
           google:
             api-key: 
+            client-id: 
+            client-secret: 
+            scope: 
+              - https://www.googleapis.com/auth/userinfo.email
+              - https://www.googleapis.com/auth/userinfo.profile
+          facebook:
+            client-id: 
+            client-secret: 
+            scope: 
+              - email
+              - public_profile
 looseboxes:
   spring:
-    oauth:
+    oauth2:
       google:
         # This property is dependent on property: spring.security.oauth2.client.registration.google.api-key
         user-info-uri: https://people.googleapis.com/v1/people/me?personFields=emailAddresses,genders,metadata,names,phoneNumbers,photos,urls&key=${spring.security.oauth2.client.registration.google.api-key}   
