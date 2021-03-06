@@ -7,7 +7,7 @@ import java.util.Properties;
  */
 public interface OAuth2ClientProperties {
     
-    String PROPERTY_PREFIX = "looseboxes.spring.oauth.";
+    String PROPERTY_PREFIX = "looseboxes.spring.oauth2.";
     
     String API_KEY = "api-key";
     
