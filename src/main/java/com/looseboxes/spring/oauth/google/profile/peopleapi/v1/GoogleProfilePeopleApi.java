@@ -1,6 +1,9 @@
 package com.looseboxes.spring.oauth.google.profile.peopleapi.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.looseboxes.spring.oauth.profile.OAuth2Profile;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +24,34 @@ public class GoogleProfilePeopleApi implements Serializable{
     private List<Locale> locales = Collections.EMPTY_LIST;
     private List<Gender> genders = Collections.EMPTY_LIST;
     private Metadata metadata;
+
+    public GoogleProfilePeopleApi() { }
+
+    public GoogleProfilePeopleApi(GoogleOAuth2UserAttributes user) {
+        if(user.getEmail() != null) {
+            EmailAddress email = new EmailAddress();
+            email.setValue(user.getEmail());
+            setEmailAddresses(Collections.singletonList(email));
+        }
+        if(user.getPicture() != null) {
+            Photo photo = new Photo();
+            photo.setUrl(user.getPicture());
+            setPhotos(Collections.singletonList(photo));
+        }
+        if(user.getLocale() != null) {
+            Locale locale = new Locale();
+            locale.setValue(user.getLocale());
+            setLocales(Collections.singletonList(locale));
+        }
+        String givenName = user.getGivenName();
+        String familyName = user.getFamilyName();
+        if(givenName != null || familyName != null) {
+            Name name = new Name();
+            name.setFamilyName(familyName);
+            name.setGivenName(givenName);
+            setNames(Collections.singletonList(name));
+        }
+    }
 
     public List<Photo> getPhotos() {
         return photos;

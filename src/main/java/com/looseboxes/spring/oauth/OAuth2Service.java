@@ -2,6 +2,7 @@ package com.looseboxes.spring.oauth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.looseboxes.spring.oauth.google.profile.peopleapi.v1.GoogleProfilePeopleApi;
 import com.looseboxes.spring.oauth.profile.OAuth2Profile;
 import com.looseboxes.spring.oauth.facebook.Facebook;
 import com.looseboxes.spring.oauth.google.Google;
@@ -79,7 +80,7 @@ public class OAuth2Service {
     }
     
     public OAuth2Profile getUserProfile(String clientId, OAuth2AccessToken authToken, OAuth2User user) {
-        
+
         final String cacheKey = "profile_" + clientId + '_' + user.getName();
         
         Cache cache = cacheProvider.getCache().orElse(null);
@@ -108,8 +109,10 @@ public class OAuth2Service {
         try{
             result = this.getApiBinding(clientId, authToken).fetchOAuthProfile(user);
         }catch(Exception e) {
-            log.warn("Failed to fetch OAuth2 " + clientId + "profile for: " + user, e);
-            return null;
+            final String msg = "Failed to fetch OAuth2 " + clientId + " profile for: " + user;
+            log.warn(msg + " Reason: " + e);
+            log.debug(msg, e);
+            result = null;
         }
         return Optional.ofNullable(result);
     }

@@ -57,9 +57,9 @@ public class ApiBinding<P> implements OAuth2ApiBinding {
 //        restTemplate.getForObject(userInfoUri, String.class);
 
         String json = null;
-        P profile = null;
+        P profileFromOAuth2Service = null;
         try{
-            profile = restTemplate.getForObject(userInfoUri, type);
+            profileFromOAuth2Service = restTemplate.getForObject(userInfoUri, type);
         }catch(Exception e) {
             try{
                 json = restTemplate.getForObject(userInfoUri, String.class);
@@ -70,11 +70,11 @@ public class ApiBinding<P> implements OAuth2ApiBinding {
             }
         }
         
-        if(profile == null && json != null) {
-            profile = objectMapper.readValue(json, type);
-        }else if(profile != null && json == null) {
+        if(profileFromOAuth2Service == null && json != null) {
+            profileFromOAuth2Service = objectMapper.readValue(json, type);
+        }else if(profileFromOAuth2Service != null && json == null) {
             try{
-                json = objectMapper.writeValueAsString(profile);
+                json = objectMapper.writeValueAsString(profileFromOAuth2Service);
                 LOG.debug("{}", json);
             }catch(JsonProcessingException e) {
                 LOG.warn("Failed to write profile as json text", e);
@@ -85,15 +85,27 @@ public class ApiBinding<P> implements OAuth2ApiBinding {
         
         if(converterFactory.isSupported(type)) {
             
-            Converter<P, UserProfile> converter = this.converterFactory.getConverter(type);
-            
-            return new OAuth2ProfileImpl(clientId, userInfoUri, user, converter.convert(profile), json);
-            
+            return this.convertToOAuth2Profile(user, profileFromOAuth2Service, json);
+
         }else{
             
             throw new UnsupportedOperationException("Conversion from " + 
                     type + " to UserProfile not supported");
         }
+    }
+
+    protected OAuth2Profile<P> convertToOAuth2Profile(OAuth2User user, P profileFromOAuthService, String json) {
+
+        UserProfile<P> userProfile = convertToUserProfile(user, profileFromOAuthService);
+
+        return new OAuth2ProfileImpl(clientId, userInfoUri, user, userProfile, json);
+    }
+
+    protected UserProfile<P> convertToUserProfile(OAuth2User user, P profileFromOAuthService) {
+
+        Converter<P, UserProfile> converter = this.converterFactory.getConverter(type);
+
+        return converter.convert(profileFromOAuthService);
     }
 
     private ClientHttpRequestInterceptor getBearerTokenInterceptor(String accessToken) {
